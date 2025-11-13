@@ -1,50 +1,109 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!-- 
+シンク・インパクト・レポート (v1.0.0 - 初期憲法)
+=============================================
+バージョン: 1.0.0 (初期)
+批准日: 2025-11-13
+変更内容: Unity6_MultiMouse プロジェクト用の初期憲法を作成
+変更された原則: なし（新規憲法）
+追加セクション: 核心原則、技術スタック、開発ワークフロー、ガバナンス
+削除セクション: なし
+テンプレート更新状況:
+  - plan-template.md ✅ アライン済み（汎用 - プロジェクト固有のゲート不要）
+  - spec-template.md ✅ アライン済み（汎用 - プロジェクト固有の要件不要）
+  - tasks-template.md ✅ アライン済み（汎用 - プロジェクト固有のタスク型不要）
+後続TODO: なし
+-->
 
-## Core Principles
+# Unity6_MultiMouse 憲法
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+Windows API を C# DllImport 経由で使用して、Unity 6 で複数マウス入力を処理するサンプルプロジェクト。
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+## 核心原則
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### I. シンプル設計
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+コードは明確で分かりやすく、理解しやすいものでなければならない（MUST）。複雑な実装にはすべて明確な正当化とドキュメント化が必須である。YAGNI（You Aren't Gonna Need It）の原則を適用し、複数マウス入力の実証に直接貢献する機能のみを実装する。過度な設計を避け、シンプルで単一の責務を持つ関数を優先する。
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+**根拠**: 教育的なサンプルプロジェクトは、他者が容易に学べるときに最も価値を発揮する。シンプルさはコードベースの保守性を高め、読み手の認知負荷を軽減する。
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+### II. Windows API via DllImport（非交渉原則）
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+Windows API との全ての相互作用は、C# DllImport を用いて Windows ライブラリ（user32.dll など）に直接アクセスしなければならない（MUST）。C++ ラッパー層、COM interop、または第三者の Windows 抽象化ライブラリは一切許可されない。宣言には必ずパラメータ説明と参照元ドキュメントの注釈が必須である。
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+**根拠**: 直接 DllImport を使用することで、プロジェクトは C# 内で自己完結し、この技法をクリアに実証できる。ユーザーは同じパターンを他の Windows API に適用できる。
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### III. 複数マウス対応は必須
 
-## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+システムは複数接続されたマウスからの入力を同時に処理しなければならない（MUST）。入力処理は単一マウスの存在を前提としてはいけない。各マウスはデバイス ID などを通じて独立して追跡・識別可能でなければならない（MUST）。
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+**根拠**: これはプロジェクトの存在を正当化する核心機能である。全ての設計判断はこの能力の実現を優先すべき。
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+### IV. 実行時デモンストレーション必須
+
+プロジェクトは複数マウス入力を視覚的に実証する動作する Unity シーンを含まなければならない（MUST）。デモンストレーションは独立して実行可能でなければならない――Unity 6 でシーンを開く以上の複雑なビルドツールやセットアップは不要である（MUST）。
+
+**根拠**: ユーザーは動作する機能を見ることで最も よく学ぶ。ライブでインタラクティブなデモは、ドキュメント単独よりも信頼性がある。
+
+### V. 明確なドキュメント及び著作権表示
+
+全ての DllImport 宣言には Windows API ドキュメントソースを参照する行コメントが必須である（MUST）。自明でない技術的選択には必ず正当化理由をコメント記載する。README には セットアップ手順、API 参照、及びサンプルコード出典の著作権表示を含めなければならない（MUST）。
+
+**根拠**: サンプルコードは、他者がその実装背景の「なぜ」を理解し、自らのプロジェクトに適用できてこそ価値を持つ。
+
+## 技術スタック（固定）
+
+- **エンジン**: Unity 6
+- **言語**: C#
+- **IDE/エディタ**: VSCode
+- **プラットフォーム対象**: Windows（デスクトップ）
+- **Windows API**: C# DllImport 経由でアクセス（user32.dll など）
+- **テスト**: Unity Editor での手動検証（MVP段階では自動テストフレームワーク不要）
+
+このスタックからの逸脱は、実装前に明確な正当化と承認が必須である。
+
+## 開発ワークフロー
+
+### コードスタイル及び構造
+
+- 1ファイル 1 クラス/インターフェース；名前空間の構成はフォルダ構造に対応
+- 変数とメソッドは camelCase を使用；クラスは PascalCase を使用
+- 全てのパブリックメソッドには XML ドキュメントコメントが必須
+- DllImport 宣言は専用ユーティリティまたは API モジュールに集約
+
+### Git ワークフロー
+
+- 機能は機能ブランチで開発（`feature/[説明]` または `[チケット]-[説明]`）
+- main へのコミット全てが、実装中の機能またはバグ修正を参照するべき
+- プルリクエストには以下を含めなければならない：
+  1. 変更の説明
+  2. テスト方法（該当する場合）
+  3. その変更が複数マウス機能の実証を行う確認
+
+### 変更レビューゲート
+
+全ての変更は以下を検証しなければならない：
+
+1. シンプル設計の原則が保たれている（不正当な複雑性がない）
+2. Windows API アプローチが DllImport 標準に適合している
+3. 複数マウス機能が退行していない
+4. デモシーンが Unity Editor で実行可能な状態である
+
+## ガバナンス
+
+**憲法の権限**: この憲法は全ての開発実践とドキュメントに優先する。矛盾が生じた場合、本ドキュメントが最優先される。
+
+**修正プロセス**:
+
+- 軽微な更新（説明、タイプミス、フォーマット）→ パッチ版バンプ（X.Y.Z → X.Y.+1）
+- 新原則の追加または重要なガイダンス拡張 → マイナー版バンプ（X.Y.Z → X.+1.0）
+- 原則の削除または重大な再定義 → メジャー版バンプ（X.Y.Z → +1.0.0）
+- 全ての修正は LAST_AMENDED_DATE とバージョン番号を更新する必須
+- 修正はこのファイル先頭にサマリーコメントを追加する必須
+
+**準拠確認**: オープン PR の週次チェックで 5 つの原則への準拠を検証する。コードレビュー中に見つかった違反はマージ前に解決されることが必須。
+
+**運用ガイダンス**: 日常的な開発質問については、README.md 及びインラインコメント内の運用ガイダンスを参照のこと。本憲法は「なぜ」を定義し；README は「どうするか」を定義する。
+
+---
+
+**バージョン**: 1.0.0 | **批准日**: 2025-11-13 | **最終修正日**: 2025-11-13
