@@ -1,139 +1,139 @@
-# Feature Specification: Multi-Mouse Input Manager
+# 機能仕様: マルチマウス入力マネージャー
 
-**Feature Branch**: `001-multi-mouse-input`  
-**Created**: 2025-11-13  
-**Status**: Draft  
-**Input**: User description: "複数のマウス入力を取得するためのマネージャークラス、複数マウス入力動作確認用サンプルシーン、Editor・Build両対応"
+**機能ブランチ**: `001-multi-mouse-input`  
+**作成日**: 2025-11-13  
+**ステータス**: ドラフト  
+**入力**: ユーザー記述: "複数のマウス入力を取得するためのマネージャークラス、複数マウス入力動作確認用サンプルシーン、Editor・Build両対応"
 
-## User Scenarios & Testing
+## ユーザーシナリオ及びテスト
 
-### User Story 1 - Initialize Multi-Mouse System (Priority: P1)
+### ユーザーストーリー 1 - マルチマウスシステムの初期化（優先度: P1）
 
-A developer imports the Unity6_MultiMouse sample into their project and initializes the multi-mouse input manager in a script. They want to access all connected mice without complex setup or configuration.
+開発者が Unity6_MultiMouse サンプルを自分のプロジェクトにインポートし、スクリプト内でマルチマウス入力マネージャーを初期化する。複雑なセットアップや設定なしに、接続されたすべてのマウスにアクセスしたい。
 
-**Why this priority**: This is the foundational capability - without a way to initialize and access the system, nothing else works. All other features depend on this.
+**この優先度の理由**: これは基礎機能 - システムを初期化してアクセスする方法がなければ、他のすべての機能は動作しない。他のすべての機能はこの機能に依存している。
 
-**Independent Test**: Developer can add the manager to a GameObject, call its initialization method with zero or minimal parameters, and start receiving input events from all connected mice immediately.
+**独立テスト**: 開発者が GameObject にマネージャーを追加し、0 個または最小限のパラメータで初期化メソッドを呼び出すことで、すぐに接続されたすべてのマウスからの入力を受け取ることができる。
 
-**Acceptance Scenarios**:
+**受け入れシナリオ**:
 
-1. **Given** a new Unity scene with no input setup, **When** a script initializes the MultiMouseInputManager, **Then** the manager detects all currently connected mice and becomes ready to receive input
-2. **Given** the manager is initialized, **When** a new mouse is physically connected to the system, **Then** the new mouse is automatically detected and included in subsequent input queries
-3. **Given** a mouse is disconnected, **When** input is queried, **Then** that mouse's data is no longer included in the results
-
----
-
-### User Story 2 - Detect Individual Mouse Button Presses (Priority: P1)
-
-A developer wants to know which physical mouse was pressed and which button (left, right, middle) was pressed, so they can handle input from multiple mice independently.
-
-**Why this priority**: Core requirement - users need to distinguish input from different mice by button press, which is the primary use case.
-
-**Independent Test**: With multiple mice connected, pressing buttons on different mice produces distinct input events that can be correlated to specific mouse devices. Can be tested in both Editor play mode and built application.
-
-**Acceptance Scenarios**:
-
-1. **Given** two mice are connected, **When** left button is pressed on mouse #1, **Then** an event is fired identifying mouse #1 and left button press
-2. **Given** two mice are connected, **When** right button is pressed on mouse #2, **Then** an event is fired identifying mouse #2 and right button press
-3. **Given** middle button exists, **When** middle button is pressed, **Then** an event is fired identifying the pressed mouse and middle button
-4. **Given** a button is held down, **When** another button is pressed on a different mouse, **Then** both button states are tracked independently
+1. **前提**: 入力設定のない新しい Unity シーンがある、**実行**: MultiMouseInputManager を初期化する、**期待**: マネージャーが現在接続されているすべてのマウスを検出し、入力受け取り準備が整う
+2. **前提**: マネージャーが初期化されている、**実行**: 新しいマウスがシステムに物理的に接続される、**期待**: 新しいマウスが自動検出され、その後のクエリに含まれる
+3. **前提**: マウスが切断される、**実行**: 入力がクエリされる、**期待**: 切断されたマウスのデータはもう結果に含まれない
 
 ---
 
-### User Story 3 - Track Individual Mouse Positions (Priority: P1)
+### ユーザーストーリー 2 - 個別マウスボタン押下の検出（優先度: P1）
 
-A developer wants to query the current screen-space position of each connected mouse, so they can render cursors or interact with UI elements independently for each mouse.
+開発者は、物理的にどのマウスが押されたか、どのボタン（左、右、中央）が押されたかを知りたい。そうすれば、複数マウスからの入力を独立して処理できる。
 
-**Why this priority**: Essential for visual feedback and multi-cursor UI interaction - users need real-time position data for each mouse.
+**この優先度の理由**: 核心要件 - ユーザーは異なるマウスからの入力をボタンプレスで区別する必要があり、これが主要なユースケース。
 
-**Independent Test**: By querying mouse positions in a frame, developer can verify that each connected mouse returns accurate screen coordinates. Visual verification in sample scene shows multiple cursors at correct positions.
+**独立テスト**: 複数のマウスが接続されている状態で、異なるマウスのボタンを押すと、特定のマウスデバイスに相関させることができる区別されたイベントが生成される。Editor のプレイモードとビルドされたアプリケーションの両方でテスト可能。
 
-**Acceptance Scenarios**:
+**受け入れシナリオ**:
 
-1. **Given** two mice are connected, **When** mouse positions are queried, **Then** each mouse returns its own current screen position independently
-2. **Given** mouse #1 moves to position (100, 200), **When** position is queried, **Then** mouse #1's position is (100, 200) and mouse #2's position is unaffected
-3. **Given** both mice move simultaneously, **When** positions are queried in the same frame, **Then** both positions reflect current movement independent of each other
-
----
-
-### User Story 4 - Track Individual Mouse Movement Delta (Priority: P1)
-
-A developer wants to query how much each mouse has moved in the current or previous frame, so they can implement mouse-based camera control or aiming mechanics that work independently per mouse.
-
-**Why this priority**: Essential for interactive applications - users need delta movement for smooth, responsive input (action games require low-latency movement tracking).
-
-**Independent Test**: By querying movement delta in a frame, developer can verify each connected mouse returns movement relative to its last position. Visual verification shows movement magnitude and direction per mouse.
-
-**Acceptance Scenarios**:
-
-1. **Given** two mice are connected, **When** movement deltas are queried in a frame, **Then** each mouse returns its own movement vector (deltaX, deltaY) independent of others
-2. **Given** mouse #1 moves 10 pixels right and mouse #2 moves 5 pixels down, **When** deltas are queried, **Then** mouse #1 delta is (10, 0) and mouse #2 delta is (0, 5)
-3. **Given** a mouse does not move in a frame, **When** its delta is queried, **Then** the delta is (0, 0)
+1. **前提**: 2 つのマウスが接続されている、**実行**: マウス #1 の左ボタンを押す、**期待**: マウス #1 と左ボタン押下を識別するイベントが発火される
+2. **前提**: 2 つのマウスが接続されている、**実行**: マウス #2 の右ボタンを押す、**期待**: マウス #2 と右ボタン押下を識別するイベントが発火される
+3. **前提**: 中央ボタンが存在する、**実行**: 中央ボタンが押される、**期待**: 押されたマウスと中央ボタンを識別するイベントが発火される
+4. **前提**: ボタンが押された状態が続いている、**実行**: 別のマウスで別のボタンが押される、**期待**: 両方のボタン状態が独立して追跡される
 
 ---
 
-### User Story 5 - Visualize Multi-Mouse Activity in Sample Scene (Priority: P2)
+### ユーザーストーリー 3 - 個別マウス位置の追跡（優先度: P1）
 
-A developer wants to see a clear, interactive visualization of multi-mouse input in action, displaying button states, positions, and movement for all connected mice. This serves both as documentation and as a quick validation tool.
+開発者は接続されたマウスごとの現在スクリーン座標位置をクエリしたい。そうすれば、各マウスのカーソルやUI要素とのインタラクションを独立して処理できる。
 
-**Why this priority**: High-value reference implementation - shows correct usage patterns and helps users verify their system is working. Can be tested independently without requiring integration into user's own application.
+**この優先度の理由**: ビジュアルフィードバックとマルチカーソルUI インタラクションに必須 - ユーザーは各マウスのリアルタイム位置データが必要。
 
-**Independent Test**: Open sample scene in Unity Editor or built application, connect multiple mice, and interact with the scene. All mouse activity (buttons, positions, movement) should update visually in real-time.
+**独立テスト**: フレーム内でマウス位置をクエリすることで、接続されたマウスが正確なスクリーン座標を返すことを確認できる。サンプルシーンでの視覚的検証により、複数カーソルが正しい位置に表示される。
 
-**Acceptance Scenarios**:
+**受け入れシナリオ**:
 
-1. **Given** sample scene is running, **When** a button is pressed on any mouse, **Then** UI or visual element shows which mouse and which button was pressed
-2. **Given** sample scene is running, **When** mice move, **Then** visual cursors or indicators move to track each mouse's position independently
-3. **Given** sample scene is running, **When** mice move, **Then** movement magnitude or direction indicator updates to show delta movement
-4. **Given** sample scene is running in Editor play mode, **When** mice are moved and clicked, **Then** behavior is identical to running in built application
+1. **前提**: 2 つのマウスが接続されている、**実行**: マウス位置がクエリされる、**期待**: 各マウスが独立して自分の現在スクリーン位置を返す
+2. **前提**: マウス #1 が位置 (100, 200) に移動する、**実行**: 位置がクエリされる、**期待**: マウス #1 の位置は (100, 200) で、マウス #2 の位置は影響されない
+3. **前提**: 両方のマウスが同時に移動する、**実行**: 同じフレーム内で位置がクエリされる、**期待**: 両方の位置が互いに独立した現在の移動を反映する
 
 ---
 
-### Edge Cases
+### ユーザーストーリー 4 - 個別マウス移動デルタの追跡（優先度: P1）
 
-- What happens when 10+ mice are connected simultaneously?
-- How does the system handle rapid button press/release sequences on multiple mice?
-- What happens when a mouse is disconnected mid-application execution?
-- What happens on systems with no mice connected (should gracefully return empty data)?
+開発者は各マウスが現在フレーム内で、または前フレームからどれだけ移動したかをクエリしたい。そうすれば、マウスベースのカメラ制御やエイムメカニクスを実装でき、各マウスで独立して動作させられる。
 
-## Requirements
+**この優先度の理由**: インタラクティブアプリケーションに必須 - ユーザーはスムーズでレスポンシブな入力（アクションゲームは低遅延の移動追跡が必要）のためにデルタ移動が必要。
 
-### Functional Requirements
+**独立テスト**: フレーム内で移動デルタをクエリすることで、接続されたマウスが移動相対値（deltaX、deltaY）を返すことを確認できる。サンプルシーンでの視覚的検証により、マウスごとの移動量と方向が表示される。
 
-- **FR-001**: System MUST detect all Windows mice connected via physical/virtual device drivers
-- **FR-002**: System MUST identify each mouse uniquely by device ID or similar persistent identifier
-- **FR-003**: System MUST provide access to left, right, and middle mouse button states (pressed, held, released) for each mouse independently
-- **FR-004**: System MUST provide current screen-space (pixel) position for each connected mouse
-- **FR-005**: System MUST provide movement delta (change in position) for each mouse per frame with minimal latency
-- **FR-006**: System MUST implement manager as a C# class accessible via static or singleton pattern with no dependency on external libraries
-- **FR-007**: System MUST work identically in Unity Editor play mode and in built Windows applications
-- **FR-008**: System MUST use only C# DllImport calls to Windows API (user32.dll or equivalent), with no C++ wrappers or COM interop
-- **FR-009**: System MUST provide a sample scene that visualizes input from all connected mice (button presses, cursor positions, movement)
-- **FR-010**: Sample scene MUST be launchable from a fresh Unity 6 editor without additional build steps or configuration
+**受け入れシナリオ**:
 
-### Non-Functional Requirements
+1. **前提**: 2 つのマウスが接続されている、**実行**: フレーム内で移動デルタがクエリされる、**期待**: 各マウスが独立して移動ベクトル（deltaX、deltaY）を返す
+2. **前提**: マウス #1 が 10 ピクセル右に移動し、マウス #2 が 5 ピクセル下に移動する、**実行**: デルタがクエリされる、**期待**: マウス #1 デルタは (10, 0) で、マウス #2 デルタは (0, 5)
+3. **前提**: マウスが フレーム内で移動しない、**実行**: デルタがクエリされる、**期待**: デルタは (0, 0)
 
-- **NFR-001**: Input latency MUST be negligible (< 1 frame at 60 FPS) to support action game use cases
-- **NFR-002**: No external assets, plugins, or libraries outside of Unity 6 standard modules
-- **NFR-003**: Code MUST be simple and understandable for beginners - no advanced design patterns, no abstraction layers without clear justification
-- **NFR-004**: API surface MUST be minimal - main method for querying mice should require 0-1 parameters
-- **NFR-005**: All DllImport declarations MUST include Windows API documentation references and parameter explanations
-- **NFR-006**: System MUST support up to at least 4 mice simultaneously without performance degradation
+---
 
-### Key Entities
+### ユーザーストーリー 5 - サンプルシーンでマルチマウスアクティビティの可視化（優先度: P2）
 
-- **Mouse Device**: Represents a single connected mouse with unique ID, current position, button states, and movement delta
-- **Mouse Input State**: Snapshot of a single mouse's state at a point in time (position, buttons, delta)
-- **Input Manager**: Central manager class that aggregates input from all connected mice and exposes query methods
+開発者は、複数マウス入力を動作中に見ることで、明確でインタラクティブなビジュアル表示を求めている。接続されたすべてのマウスのボタン状態、位置、動きを表示する。これはドキュメント化とユーザーのシステム検証ツールの両方として機能する。
 
-## Success Criteria
+**この優先度の理由**: 高価値の参考実装 - 正しい使用パターンを示し、ユーザーがシステムが動作していることを検証するのに役立つ。ユーザー自身のアプリケーションへの統合を必要としずに独立してテスト可能。
 
-### Measurable Outcomes
+**独立テスト**: Unity Editor またはビルドされたアプリケーションでサンプルシーンを開き、複数のマウスを接続し、シーンとインタラクションする。すべてのマウスアクティビティ（ボタン、位置、動き）がリアルタイムでシーンに表示される。
 
-- **SC-001**: All 4 connected mice are detected and tracked simultaneously in the sample scene without data loss or cross-contamination
-- **SC-002**: Button press events are delivered with zero frame delay (observed within the same frame the input occurred)
-- **SC-003**: Movement delta values show <1ms latency between physical mouse movement and queryable data
-- **SC-004**: Sample scene runs at 60+ FPS on standard Windows development machine with 4 mice connected
-- **SC-005**: A complete integration example (code + sample scene) is provided that a developer can copy/paste and use immediately
-- **SC-006**: First-time user can understand and verify multi-mouse functionality within 5 minutes of opening the project
+**受け入れシナリオ**:
+
+1. **前提**: サンプルシーンが実行中、**実行**: 任意のマウスでボタンが押される、**期待**: UI またはビジュアル要素がどのマウスのどのボタンが押されたかを表示する
+2. **前提**: サンプルシーンが実行中、**実行**: マウスが移動する、**期待**: ビジュアルカーソルまたはインジケータが各マウスの位置を独立して追跡する
+3. **前提**: サンプルシーンが実行中、**実行**: マウスが移動する、**期待**: 移動量または方向インジケータが更新され、デルタ移動を表示する
+4. **前提**: サンプルシーンが Editor のプレイモードで実行中、**実行**: マウスが移動・クリックされる、**期待**: 動作がビルドされたアプリケーションでの実行と同じ
+
+---
+
+### エッジケース
+
+- 10 個以上のマウスが同時に接続されている場合はどうなるか？
+- 複数マウスでの高速ボタンプレス/リリースシーケンスについて、システムはどう処理するか？
+- アプリケーション実行中にマウスが切断される場合はどうなるか？
+- マウスが接続されていないシステムではどうなるか？（空のデータをグレースフルに返すべき）
+
+## 要件
+
+### 機能要件
+
+- **FR-001**: システムは物理/仮想デバイスドライバ経由で接続されたすべての Windows マウスを検出しなければならない
+- **FR-002**: システムは各マウスをデバイス ID または同様の永続的な識別子で一意に識別しなければならない
+- **FR-003**: システムは各マウスについて左、右、中央マウスボタンの状態（押下、保持、リリース）を独立して提供しなければならない
+- **FR-004**: システムは接続されたマウスごとに現在のスクリーン座標（ピクセル）位置を提供しなければならない
+- **FR-005**: システムは各マウスのムーブメントデルタ（位置の変化）をフレーム単位で最小遅延で提供しなければならない
+- **FR-006**: システムはマネージャーを C# クラスとして実装し、スタティックまたはシングルトンパターン経由でアクセスでき、外部ライブラリに依存してはいけない
+- **FR-007**: システムは Unity Editor のプレイモードとビルドされた Windows アプリケーションで同じように動作しなければならない
+- **FR-008**: システムは Windows API（user32.dll など）への C# DllImport 呼び出しのみを使用し、C++ ラッパーや COM interop は使用してはいけない
+- **FR-009**: システムはサンプルシーンを提供し、接続されたすべてのマウスからの入力を可視化する（ボタンプレス、カーソル位置、移動）
+- **FR-010**: サンプルシーンは新規 Unity 6 エディタから追加のビルド手順または設定なしで起動可能でなければならない
+
+### 非機能要件
+
+- **NFR-001**: 入力遅延は無視できるレベル（60 FPS で < 1 フレーム）でなければならない（アクションゲーム対応用）
+- **NFR-002**: Unity 6 標準モジュール以外の外部アセット、プラグイン、またはライブラリはない
+- **NFR-003**: コードは初学者が理解できるシンプルなものでなければならない - 高度な設計パターン、正当化がない抽象化層は不可
+- **NFR-004**: API サーフェスは最小限でなければならない - マウスをクエリするメインメソッドは 0～1 個のパラメータが必須
+- **NFR-005**: すべての DllImport 宣言は Windows API ドキュメント参照とパラメータ説明を含まねばならない
+- **NFR-006**: システムは 4 個以上のマウスを同時にサポートし、パフォーマンス低下なく動作しなければならない
+
+### キーエンティティ
+
+- **マウスデバイス**: 一意の ID、現在位置、ボタン状態、ムーブメントデルタを持つ、接続されたマウスを表す
+- **マウス入力状態**: 特定時点での単一マウスの状態スナップショット（位置、ボタン、デルタ）
+- **入力マネージャー**: 接続されたすべてのマウスからの入力を集約し、クエリメソッドを公開する中央マネージャークラス
+
+## 成功基準
+
+### 測定可能なアウトカム
+
+- **SC-001**: 4 個のマウスが同時に検出・追跡され、データ損失またはクロスコンタミネーションなしでサンプルシーン内で動作する
+- **SC-002**: ボタンプレスイベントはゼロフレームディレイで配信される（入力が発生した同じフレーム内）
+- **SC-003**: ムーブメントデルタ値は物理マウス移動とクエリ可能なデータ間で < 1ms 遅延を示す
+- **SC-004**: サンプルシーンは 4 個のマウスが接続されている標準 Windows 開発マシンで 60+ FPS で実行される
+- **SC-005**: 完全な統合例（コード + サンプルシーン）が提供され、開発者がコピー/ペースト直後に使用できる
+- **SC-006**: 初回ユーザーがプロジェクトを開いてから 5 分以内にマルチマウス機能を理解・検証できる
 

@@ -1,48 +1,48 @@
-# Specification Quality Checklist: Multi-Mouse Input Manager
+# 仕様品質チェックリスト: マルチマウス入力マネージャー
 
-**Purpose**: Validate specification completeness and quality before proceeding to planning
-**Created**: 2025-11-13
-**Feature**: [spec.md](../spec.md)
+**目的**: 計画フェーズに進む前に仕様の完成度と品質を検証する
+**作成日**: 2025-11-13
+**機能**: [spec.md](../spec.md)
 
-## Content Quality
+## コンテンツ品質
 
-- [x] No implementation details (languages, frameworks, APIs)
-- [x] Focused on user value and business needs
-- [x] Written for non-technical stakeholders
-- [x] All mandatory sections completed
+- [x] 実装詳細がない（言語、フレームワーク、API）
+- [x] ユーザー価値とビジネスニーズに焦点を当てている
+- [x] 非技術的ステークホルダー向けに記述されている
+- [x] すべての必須セクションが完成している
 
-## Requirement Completeness
+## 要件の完全性
 
-- [x] No [NEEDS CLARIFICATION] markers remain
-- [x] Requirements are testable and unambiguous
-- [x] Success criteria are measurable
-- [x] Success criteria are technology-agnostic (no implementation details)
-- [x] All acceptance scenarios are defined
-- [x] Edge cases are identified
-- [x] Scope is clearly bounded
-- [x] Dependencies and assumptions identified
+- [x] [NEEDS CLARIFICATION] マーカーが残っていない
+- [x] 要件がテスト可能で曖昧でない
+- [x] 成功基準が測定可能である
+- [x] 成功基準が技術独立的（実装詳細がない）
+- [x] すべての受け入れシナリオが定義されている
+- [x] エッジケースが特定されている
+- [x] スコープが明確に境界付けられている
+- [x] 依存関係と前提条件が特定されている
 
-## Feature Readiness
+## 機能準備状況
 
-- [x] All functional requirements have clear acceptance criteria
-- [x] User scenarios cover primary flows
-- [x] Feature meets measurable outcomes defined in Success Criteria
-- [x] No implementation details leak into specification
+- [x] すべての機能要件に明確な受け入れ基準がある
+- [x] ユーザーシナリオが主要フロー全体をカバーしている
+- [x] 機能が成功基準で定義された測定可能なアウトカムを満たしている
+- [x] 仕様に実装詳細が漏れていない
 
-## Notes
+## 注記
 
-### Quality Assessment
+### 品質評価
 
-**PASS**: All checklist items completed successfully. Specification is ready for planning phase.
+**合格**: すべてのチェックリスト項目が正常に完成しました。仕様は計画フェーズの準備ができています。
 
-**Validation Summary**:
+**検証サマリー**:
 
-- Content is written at the right level of abstraction (what, not how)
-- Requirements are concrete and testable (e.g., "detect all Windows mice" not "use Windows API")
-- Success criteria are measurable and verifiable (frame latency, device count, FPS)
-- User scenarios map directly to implementation stories (5 independent stories covering all core functionality)
-- Edge cases identified cover realistic multi-device scenarios
-- Scope is bounded to core multi-mouse input + sample scene (no extended features)
+- コンテンツが正しい抽象化レベルで記述されている（何をするか、どのようにするかではなく）
+- 要件が具体的でテスト可能である（例：「Windows API を使用する」ではなく「すべての Windows マウスを検出」）
+- 成功基準が測定可能かつ検証可能である（フレーム遅延、デバイス数、FPS）
+- ユーザーシナリオが実装ストーリーに直接マップされている（5 つの独立したストーリーがすべての核心機能をカバー）
+- 特定されたエッジケースが現実的なマルチデバイスシナリオをカバーしている
+- スコープが核心マルチマウス入力 + サンプルシーンに限定されている（拡張機能なし）
 
-**Ready for**: `/speckit.clarify` or `/speckit.plan` command
+**準備完了**: `/speckit.plan` コマンド実行準備完了
 
